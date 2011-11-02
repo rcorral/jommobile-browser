@@ -1,0 +1,130 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+	<link href="assets/css/jquery.mobile-1.0rc2.css" rel="stylesheet" type="text/css" />
+	<link href="assets/css/customSwatch.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" charset="utf-8" src="assets/js/jquery-1.6.4.js"></script>
+	<script type="text/javascript" charset="utf-8" src="assets/js/main.js"></script>
+	<script type="text/javascript" charset="utf-8" src="assets/js/jquery.mobile-1.0rc2.js"></script>
+	<script type="text/javascript" charset="utf-8" src="assets/js/jquery.ba-bbq.min.js"></script>
+	<script type="text/javascript" charset="utf-8" src="assets/js/json2.js"></script>
+	<script type="text/javascript" charset="utf-8" src="assets/js/jcache.js"></script>
+	<script type="text/javascript" charset="utf-8" src="assets/js/defaults.js"></script>
+	<script type="text/javascript" charset="utf-8" src="assets/js/my.conf.js"></script>
+</head>
+<body>
+	<div data-role="page" id="page-category">
+
+		<div data-role="header" data-theme="b" data-position="fixed">
+			<a href="categories.html" data-rel="back" data-icon="delete">Close</a>
+			<h1 id="page-title"></h1>
+			<a href="javascript:void(0);" data-icon="check" onClick="japp._start_loader('Saving', function(){japp.save_category();});">Save</a>
+		</div><!-- /header -->
+
+		<div data-role="content">
+			<form action="category.html" method="post" data-ajax="false" id="category-form" onSubmit="return false;">
+				<div data-role="fieldcontain">
+					<label for="category-title">Title:</label>
+				    <input type="text" name="jform[title]" id="category-title" value=""  />
+				</div>
+
+				<div data-role="fieldcontain">
+					<label for="category-alias">Alias: (auto generated)</label>
+				    <input type="text" name="jform[alias]" id="category-alias" value=""  />
+				</div>
+
+				<div data-role="fieldcontain">
+					<label for="category-parent-id" class="select">Parent:</label>
+					<select name="jform[parent_id]" id="category-parent-id" data-role="none"></select>
+				</div>
+
+				<div data-role="fieldcontain">
+					<label for="category-published">Status:</label>
+					<select name="jform[published]" id="category-published">
+						<option value="1">Published</option>
+						<option value="0">Unpublished</option>
+						<option value="2">Archived</option>
+						<option value="-2">Trash</option>
+					</select> 
+				</div>
+
+				<div data-role="fieldcontain">
+					<label for="category-access" class="select">Access:</label>
+					<select name="jform[access]" id="category-access" data-role="none"></select>
+				</div>
+
+				<div data-role="fieldcontain">
+					<label for="category-language" class="select">Language:</label>
+					<select name="jform[language]" id="category-language" data-role="none"></select>
+				</div>
+
+				<div data-role="collapsible" data-collapsed="true">
+					<h3>Content</h3>
+						<textarea cols="50" rows="8" name="jform[description]" id="category-description"></textarea>
+				</div>
+
+				<div data-role="collapsible" data-collapsed="true">
+					<h3>Publishing options</h3>
+
+					<div data-role="fieldcontain">
+						<label for="category-created-user-id">Created by:</label>
+						<select name="jform[created_user_id]" id="category-created-user-id" data-role="none"></select>
+					</div>
+				</div>
+
+				<div data-role="collapsible" data-collapsed="true">
+					<h3>Parameters (Advanced)</h3>
+
+					<div data-role="fieldcontain">
+						<label for="category-category-layout">Alternative Layout:</label>
+						<select name="jform[params][category_layout]" id="category-category-layout" data-role="none"></select>
+					</div>
+
+					<div data-role="fieldcontain">
+						<label for="category-note">Note:</label>
+					    <input type="text" name="jform[note]" id="category-note" value=""  />
+					</div>
+				</div>
+
+				<div data-role="collapsible" data-collapsed="true">
+					<h3>Metadata Information</h3>
+
+					<div data-role="fieldcontain">
+						<label for="category-meta-description">Meta Description:</label>
+						<textarea cols="50" rows="8" name="jform[metadesc]" id="category-meta-description"></textarea>
+					</div>
+
+					<div data-role="fieldcontain">
+						<label for="category-meta-keywords">Meta Keywords:</label>
+						<textarea cols="50" rows="8" name="jform[metakey]" id="category-meta-keywords"></textarea>
+					</div>
+
+					<div data-role="fieldcontain">
+						<label for="category-metadata-author">Author:</label>
+					    <input type="text" name="jform[metadata][author]" id="category-metadata-author" value=""  />
+					</div>
+
+					<div data-role="fieldcontain">
+						<label for="category-metadata-robots">Robots:</label>
+						<select name="jform[metadata][robots]" id="category-metadata-robots">
+							<option value="">Use Global</option>
+							<option value="index, follow">Index, Follow</option>
+							<option value="noindex, follow">No index, follow</option>
+							<option value="index, nofollow">Index, No follow</option>
+							<option value="noindex, nofollow">No index, no follow</option>
+						</select>
+					</div>
+				</div>
+
+				<input type="hidden" name="jform[extension]" value="" id="category-extension" />
+				<input type="hidden" name="jform[id]" value="" id="category-id" />
+			</form>
+			<a href="javascript:void(0);" data-role="button" data-theme="e" id="category-delete" onClick="japp._start_loader('Deleting', function(){japp.delete_category();});" style="display:none;">Delete</a>
+		</div><!-- /content -->
+	</div><!-- /page -->
+
+</body>
+</html>

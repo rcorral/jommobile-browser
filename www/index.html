@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+	<link href="assets/css/jquery.mobile-1.0rc2.css" rel="stylesheet" type="text/css" />
+	<link href="assets/css/customSwatch.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" charset="utf-8" src="assets/js/jquery-1.6.4.js"></script>
+	<script type="text/javascript" charset="utf-8" src="assets/js/main.js"></script>
+	<script type="text/javascript" charset="utf-8" src="assets/js/jquery.mobile-1.0rc2.js"></script>
+	<script type="text/javascript" charset="utf-8" src="assets/js/jquery.ba-bbq.min.js"></script>
+	<script type="text/javascript" charset="utf-8" src="assets/js/json2.js"></script>
+	<script type="text/javascript" charset="utf-8" src="assets/js/jcache.js"></script>
+	<script type="text/javascript" charset="utf-8" src="assets/js/defaults.js"></script>
+	<script type="text/javascript" charset="utf-8" src="assets/js/my.conf.js"></script>
+</head>
+<body>
+	<div data-role="page" id="page-sites">
+		<h1 id="logo">JAdminApp</h1>
+		<div data-role="header" data-theme="b" data-position="fixed">
+			<h1>Site Manager</h1>
+			<a href="site.html" data-icon="plus" class="ui-btn-right new-site-btn">New</a>
+		</div><!-- /header -->
+
+		<div data-role="content">
+			<div id="sites-list">
+				<ul data-role="listview" data-filter="true">
+					<li><a href="extensions.html">localhost</a></li>
+				</ul>
+			</div>
+			<a href="customdialog.html" data-rel="dialog" data-transition="pop" class="customdialog-link"></a>
+		</div><!-- /content -->
+	</div><!-- /page -->
+
+</body>
+</html>
