@@ -16,6 +16,10 @@ var jm_loader = {
 		for ( var i = 0; i < js.length; i++ ) {
 			this._load_asset( prefix + 'assets/js/' + js[i], 'js' );
 		}
+
+		if ( typeof jm_is_core == 'undefined' || jm_is_core == false ) {
+			this._load_asset( 'assets/js/main.js', 'js' );
+		}
 	},
 
 	_load_asset: function( filename, filetype, async ) {

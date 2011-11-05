@@ -1,7 +1,13 @@
 var japp = {
 	init: function() {
+		prefix = '';
+
+		if ( typeof jm_is_core == 'undefined' || jm_is_core == false ) {
+			prefix = '../';
+		}
+
 		this.requires_api_version = 0.1;
-		this.ajax_loader = 'assets/images/ajax-loader.gif';
+		this.ajax_loader = prefix + 'assets/images/ajax-loader.gif';
 		this.is_loading = {};
 		this.available = false;
 		this.cache = true;
@@ -895,6 +901,14 @@ function _populate_group_select( selector, obj, _key, _value, opts ) {
 			el.selectmenu('refresh');
 		}
 	}
+}
+
+function _datetime_to_date( datetime ) {
+	//function parses mysql datetime string and returns javascript Date object
+	//input has to be in this format: 2007-06-05 15:26:02
+	var regex = /^([0-9]{2,4})-([0-1][0-9])-([0-3][0-9]) (?:([0-2][0-9]):([0-5][0-9]):([0-5][0-9]))?$/;
+	var parts = datetime.replace( regex, '$1 $2 $3 $4 $5 $6' ).split( ' ' );
+	return new Date( parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5] );
 }
 
 var date_times = {
