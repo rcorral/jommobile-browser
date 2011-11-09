@@ -35,7 +35,7 @@ var jcache = {
 		meta = {
 			expiry: false,
 			isjson: true,
-			overwrite: false
+			overwrite: ( !japp.cache ? true : false )
 		};
 
 		if ( typeof opts != 'undefined' ) {

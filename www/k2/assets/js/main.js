@@ -212,28 +212,13 @@ console.log(item);
 	jQuery('#item-metakey').val(item.metakey);
 	jQuery('#item-meta-robots').val(item.metadata.robots);
 	jQuery('#item-meta-author').val(item.metadata.author);
-	return;
-	jQuery('#item-show-title').val(item.attribs.show_title).selectmenu('refresh');
-	jQuery('#item-link-titles').val(item.attribs.link_titles).selectmenu('refresh');
-	jQuery('#item-show-intro').val(item.attribs.show_intro).selectmenu('refresh');
-	jQuery('#item-show-category').val(item.attribs.show_category).selectmenu('refresh');
-	jQuery('#item-link-category').val(item.attribs.link_category).selectmenu('refresh');
-	jQuery('#item-show-parent-category').val(item.attribs.show_parent_category).selectmenu('refresh');
-	jQuery('#item-link-parent-category').val(item.attribs.link_parent_category).selectmenu('refresh');
-	jQuery('#item-show-author').val(item.attribs.show_author).selectmenu('refresh');
-	jQuery('#item-link-author').val(item.attribs.link_author).selectmenu('refresh');
-	jQuery('#item-show-create-date').val(item.attribs.show_create_date).selectmenu('refresh');
-	jQuery('#item-show-modify-date').val(item.attribs.show_modify_date).selectmenu('refresh');
-	jQuery('#item-show-publish-date').val(item.attribs.show_publish_date).selectmenu('refresh');
-	jQuery('#item-show-item-navigation').val(item.attribs.show_item_navigation).selectmenu('refresh');
-	jQuery('#item-show-icons').val(item.attribs.show_icons).selectmenu('refresh');
-	jQuery('#item-show-print-icon').val(item.attribs.show_print_icon).selectmenu('refresh');
-	jQuery('#item-show-email-icon').val(item.attribs.show_email_icon).selectmenu('refresh');
-	jQuery('#item-show-vote').val(item.attribs.show_vote).selectmenu('refresh');
-	jQuery('#item-show-hits').val(item.attribs.show_hits).selectmenu('refresh');
-	jQuery('#item-show-noauth').val(item.attribs.show_noauth).selectmenu('refresh');
-	jQuery('#item-alternative-readmore').val(item.attribs.alternative_readmore);
-	jQuery('#item-item-layout').val(item.attribs.article_layout).selectmenu();
+	for ( param in item.params ) {
+		_el = jQuery('#params_' + param)
+		_el.val(item.params[param]);
+		if ( 'SELECT' == _el[0].tagName ) {
+			_el.selectmenu('refresh');
+		}
+	};
 	jQuery('#item-id').val(item.id);
 
 	this._stop_loader();
