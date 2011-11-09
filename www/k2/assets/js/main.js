@@ -8,41 +8,43 @@ jQuery('#page-k2-items').live('pageshow',function(event){
 	}
 	} catch(e){japp._stop_loader();}
 });
-jQuery('#page-category').live('pageshow',function(event){
+jQuery('#page-k2-item').live('pagebeforecreate',function(event){
+	japp.load_k2_item_fields('item-view-options-listings');
+	japp.load_k2_item_fields('item-view-options');
+}).live('pageshow',function(event){
 	try {
 	func = function() {
+		// Get the item id
 		id = _gup( 'id' );
 
-		parentcat = japp.get_joomla_parentcategories( id, 'com_content' );
+		// Load dynamic dropdowns and other html elements
+		categories = japp.get_k2_categories();
 		access = japp.get_joomla_accesslevels();
 		languages = japp.get_content_language();
 		users = japp.get_joomla_users_list();
-		layouts = japp.get_component_layout( 'com_content', 'category', 0 );
 
-		_populate_select( '#category-parent-id', parentcat, 'row.value', 'row.text' );
-		_populate_select( '#category-access', access, 'row.value', 'row.text' );
-		_populate_select( '#category-language', languages, 'row.value', 'row.text' );
-		_populate_select( '#category-created-user-id', users, 'key', 'row.name',
+		// Populate dynamic html elements
+		_populate_select( '#item-catid', categories, 'row.value', 'row.text' );
+		_populate_select( '#item-access', access, 'row.value', 'row.text' );
+		_populate_select( '#item-language', languages, 'row.value', 'row.text' );
+		_populate_select( '#item-created-by', users, 'key', 'row.name',
 			{ select_option: true, selected_value: japp.api_user.id });
-		_populate_group_select( '#category-category-layout', layouts, 'row[\'value\']',
-			'row[\'text\']' );
 
 		// New article
 		if ( !id ) {
 			japp._stop_loader();
-			jQuery('#category-parent-id,#category-access,#category-language,'
-				+ '#category-created-user-id,#category-category-layout')
-				.selectmenu();
+			jQuery('#item-catid,#item-access,#item-language,#item-created-by').selectmenu();
 
 			return;
 		}
 
-		japp.load_category( id, 'com_content' );
+		japp.load_k2_item( id );
+		item = japp.get_k2_item( id );
 
 		// Set page title
-		jQuery('#page-title').html( 'Edit category' );
+		jQuery('.page-title').html( 'Edit item' );
 
-		jQuery('#category-delete').css('display', 'block');
+		jQuery('#item-delete').css('display', 'block');
 	}
 
 	japp._start_loader();
@@ -54,29 +56,34 @@ jQuery('#page-category').live('pageshow',function(event){
 
 // Load k2 items into list for items.html
 japp.load_k2_items = function( limitstart, limit, fresh ) {
+	// Check if we are already loading the items, to avoid loading while already loading ;)
 	if ( this._is_loading('k2_items') ) {
 		return false;
 	}
 
 	var el = jQuery('#k2-item-list ul');
-	this._started_loading('k2_items');
+	this._started_loading('k2_items'); // Start jquerymobile loader
 
+	// With this we can set a limit to how many items we load till the user scrolls to the bottom of the page
 	if ( typeof limitstart == 'undefined' ) { limitstart = jQuery(el).attr('g:limitstart') || 0; }
 	if ( typeof limit == 'undefined' ) { limit = 20; }
 
 	var func = function( data ) {
+		// Remove jquery mobile loader
 		jQuery('#ajax-loading-img').remove();
+		// Add fetched data from server to cache, and set for how long we want it to live
 		jcache.set( context, data, {expiry: date_times.seconds( date_times.hour/2 )} );
 
 		// We reached the end of the items
 		if ( !data.length ) {
-			japp.unbind_scroll_listener();
+			japp.unbind_scroll_listener(); // Remove listener for image at the bottom of page
 			japp._stopped_loading('k2_items', true);
 			return;
 		}
 
 		el = jQuery(el);
 
+		// Add each item to lsit
 		jQuery(data).each(function(){
 			state = japp.get_item_state( this.published );
 			date = _datetime_to_date( this.created );
@@ -91,14 +98,15 @@ japp.load_k2_items = function( limitstart, limit, fresh ) {
 				+ '</a></li>');
 		});
 
+		// Refresh list view with new items
 		jQuery(el).listview('refresh').attr('g:limitstart',
 			parseInt( limitstart ) + parseInt( limit ) );
 
-		// Add loading animation
+		// Add loading animation for when the user scrolls to the bottom of page
 		jQuery(el).append('<li id="ajax-loading-img"><img src="'
 			+ japp.ajax_loader + '" /></li>');
 
-		// Add scroll listener
+		// Add scroll listener to trigger this function again when user reaches bottom
 		if ( 0 == limitstart ) {
 			japp.scroll_bottom_listener( '#ajax-loading-img',
 				function(){ japp.load_k2_items(); } );
@@ -107,10 +115,12 @@ japp.load_k2_items = function( limitstart, limit, fresh ) {
 		japp._stopped_loading('k2_items', true);
 	};
 
-	var context = 'joomla.k2.items.' + limitstart + '.' + limit;
+	// Set context for caching purposes
+	var context = 'k2.items.' + limitstart + '.' + limit;
+	// Check to see if we have a cache
 	if ( japp.cache && !fresh && jcache.get( context ) ) {
 		func( jcache.get( context ) );
-	} else {
+	} else { // If no cache, then load items list from server
 		this._ajax(
 			{
 				app: 'k2',
@@ -120,3 +130,136 @@ japp.load_k2_items = function( limitstart, limit, fresh ) {
 			}, func );
 	}
 };
+
+japp.load_k2_item_fields = function( fieldset, fresh ){
+	// Set the context for caching purposes
+	var context = 'k2.item.fields.' + fieldset;
+
+	// Check cache
+	if ( japp.cache && !fresh && jcache.get( context ) ) {
+		 data = jcache.get( context );
+	} else { // else, get data from server
+		this._ajax(
+			{
+				app: 'k2',
+				resource: 'itemform',
+				fieldset: fieldset
+			}, function( data ) {
+				// If there is no data, and we are expecting data, then try request again
+				if ( japp._object_empty( data ) ) {
+					// This function will only try to get data 3 times
+					// First two parameters are filters for the request, and the last is a callback
+					japp._try_server_request_again( 'load_k2_item_fields', fieldset,
+						function(){ japp.load_k2_item_fields( fieldset, fresh ); });
+				} else {
+					// Add response to cache
+					jcache.set( context, data );
+				}
+			}, { async: false });
+		data = jcache.get( context );
+	}
+
+	if ( data.html ) {
+		jQuery('.fieldset-' + fieldset).append(data.html);
+	}
+};
+
+japp.get_k2_categories = function( fresh ){
+	var context = 'k2.categories';
+	if ( japp.cache && !fresh && jcache.get( context ) ) {
+		return jcache.get( context );
+	}
+
+	this._ajax(
+		{
+			app: 'k2',
+			resource: 'categories',
+			tree: 1
+		},
+	 	function( data ) {
+			// Try again?
+			if ( japp._object_empty( data ) ) {
+				japp._try_server_request_again( 'get_k2_kategories', '',
+					function(){ japp.get_k2_kategories( fresh ) } );
+			} else {
+				jcache.set( context, data );
+			}
+		}, { async: false });
+
+	return jcache.get( context );
+}
+
+japp.load_k2_item = function( id ) {
+	item = this.get_k2_item( id );
+console.log(item);
+	// Populate all article fields
+	jQuery('#item-title').val(item.title);
+	jQuery('#item-alias').val(item.alias);
+	jQuery('#item-catid').val(item.catid).selectmenu();
+	jQuery('#item-featured').val(item.featured).slider('refresh');
+	jQuery('#item-published').val(item.published).slider('refresh');
+	jQuery('#item-text').val( item.introtext + ( item.fulltext ? '<hr id="system-readmore" />' + item.fulltext : '' ) );
+	jQuery('#item-language').val(item.langugae).selectmenu();
+	jQuery('#item-created-by').val(item.created_by).selectmenu();
+	jQuery('#item-created-by-alias').val(item.created_by_alias);
+	jQuery('#item-access').val(item.access).selectmenu();
+	jQuery('#item-created').val(item.created);
+	jQuery('#item-publish-up').val(item.publish_up);
+	if ( item.publish_down.toString() != '0000-00-00 00:00:00' ) {
+		jQuery('#item-publish-down').val(item.publish_down);
+	}
+	jQuery('#item-metadesc').val(item.metadesc);
+	jQuery('#item-metakey').val(item.metakey);
+	jQuery('#item-meta-robots').val(item.metadata.robots);
+	jQuery('#item-meta-author').val(item.metadata.author);
+	return;
+	jQuery('#item-show-title').val(item.attribs.show_title).selectmenu('refresh');
+	jQuery('#item-link-titles').val(item.attribs.link_titles).selectmenu('refresh');
+	jQuery('#item-show-intro').val(item.attribs.show_intro).selectmenu('refresh');
+	jQuery('#item-show-category').val(item.attribs.show_category).selectmenu('refresh');
+	jQuery('#item-link-category').val(item.attribs.link_category).selectmenu('refresh');
+	jQuery('#item-show-parent-category').val(item.attribs.show_parent_category).selectmenu('refresh');
+	jQuery('#item-link-parent-category').val(item.attribs.link_parent_category).selectmenu('refresh');
+	jQuery('#item-show-author').val(item.attribs.show_author).selectmenu('refresh');
+	jQuery('#item-link-author').val(item.attribs.link_author).selectmenu('refresh');
+	jQuery('#item-show-create-date').val(item.attribs.show_create_date).selectmenu('refresh');
+	jQuery('#item-show-modify-date').val(item.attribs.show_modify_date).selectmenu('refresh');
+	jQuery('#item-show-publish-date').val(item.attribs.show_publish_date).selectmenu('refresh');
+	jQuery('#item-show-item-navigation').val(item.attribs.show_item_navigation).selectmenu('refresh');
+	jQuery('#item-show-icons').val(item.attribs.show_icons).selectmenu('refresh');
+	jQuery('#item-show-print-icon').val(item.attribs.show_print_icon).selectmenu('refresh');
+	jQuery('#item-show-email-icon').val(item.attribs.show_email_icon).selectmenu('refresh');
+	jQuery('#item-show-vote').val(item.attribs.show_vote).selectmenu('refresh');
+	jQuery('#item-show-hits').val(item.attribs.show_hits).selectmenu('refresh');
+	jQuery('#item-show-noauth').val(item.attribs.show_noauth).selectmenu('refresh');
+	jQuery('#item-alternative-readmore').val(item.attribs.alternative_readmore);
+	jQuery('#item-item-layout').val(item.attribs.article_layout).selectmenu();
+	jQuery('#item-id').val(item.id);
+
+	this._stop_loader();
+}
+
+japp.get_k2_item = function( id, fresh ) {
+	var context = 'k2.item.' + id;
+	if ( japp.cache && !fresh && jcache.get( context ) ) {
+		return jcache.get( context );
+	}
+
+	this._ajax(
+		{
+			app: 'k2',
+			resource: 'item',
+			cid: id
+		},
+	 	function( data ) {
+			// Try again?
+			if ( japp._object_empty( data ) ) {
+				japp._try_server_request_again( 'get_k2_item', id,
+				function(){ japp.get_k2_item( id, fresh ); });
+			} else {
+				jcache.set( context, data );
+			}
+		}, { async: false });
+
+	return jcache.get( context );
+}
