@@ -17,6 +17,17 @@ var jm_loader = {
 			this._load_asset( prefix + 'assets/js/' + js[i], 'js' );
 		}
 
+		if ( typeof jm_assets != 'undefined' && ( jm_assets['css'] || jm_assets['js'] ) ) {
+			for ( _key in ['css', 'js'] ) {
+				type = ['css', 'js'][_key];
+				if ( typeof jm_assets[type] != 'undefined' && jm_assets[type].length ) {
+					for ( var i = 0; i < jm_assets[type].length; i++ ) {
+						this._load_asset( jm_assets[type][i], type );
+					};
+				}
+			}
+		}
+
 		if ( typeof jm_is_core == 'undefined' || jm_is_core == false ) {
 			this._load_asset( 'assets/js/main.js', 'js' );
 		}
