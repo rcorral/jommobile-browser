@@ -189,9 +189,33 @@ japp.get_k2_categories = function( fresh ){
 	return jcache.get( context );
 }
 
+japp.get_k2_tags = function( fresh ){
+	var context = 'k2.tags';
+	if ( japp.cache && !fresh && jcache.get( context ) ) {
+		return jcache.get( context );
+	}
+
+	this._ajax(
+		{
+			app: 'k2',
+			resource: 'tags'
+		},
+	 	function( data ) {
+			// Try again?
+			if ( japp._object_empty( data ) ) {
+				japp._try_server_request_again( 'get_k2_tags', '',
+					function(){ japp.get_k2_tags( fresh ) } );
+			} else {
+				jcache.set( context, data );
+			}
+		}, { async: false });
+
+	return jcache.get( context );
+}
+
 japp.load_k2_item = function( id ) {
 	item = this.get_k2_item( id );
-console.log(item);
+
 	// Populate all article fields
 	jQuery('#item-title').val(item.title);
 	jQuery('#item-alias').val(item.alias);
@@ -220,6 +244,15 @@ console.log(item);
 		}
 	};
 	jQuery('#item-id').val(item.id);
+
+	tags = japp.get_k2_tags();
+	prepupulate = new Array;
+	for (var i = 0; i < item.tags.length; i++) {
+		prepupulate[i] = {
+			name: item.tags[i].name
+		}
+	};
+    jQuery("#item-tags").tokenInput(tags, {allowNewTokens: true, theme: "facebook", preventDuplicates: true, prePopulate: prepupulate, tokenValue: 'name'});
 
 	this._stop_loader();
 }
