@@ -46,6 +46,15 @@ jQuery('#page-k2-item').live('pagebeforecreate',function(event){
 			japp._stop_loader();
 			jQuery('#item-catid,#item-access,#item-language,#item-created-by').selectmenu();
 
+			// Initialize the tags
+			tags = japp.get_k2_tags();
+		    jQuery("#item-tags").tokenInput(tags, {allowNewTokens: true, theme: "facebook",
+		    	preventDuplicates: true, tokenValue: 'name',
+		    	hintText: 'Type in a tag', tokenDelimiter: '|*|'});
+
+			// Set page title
+			jQuery('.page-title').html( 'New item' );
+
 			return;
 		}
 
@@ -323,4 +332,43 @@ japp.save_k2_item = function( postdata ) {
 			}
 		// Either send the data as POST or PUT use the correct header for creating or updating
 		}, { async: false, type: ( ( postdata.id ) ? 'PUT' : 'POST' ) });
+}
+
+japp.delete_k2_item = function() {
+	id = jQuery('#item-id').val();
+
+	if ( !id ) {
+		japp._stop_loader();
+		_alert( 'Item not found' );
+		return false;
+	}
+
+	var answer = confirm( 'Are you sure you want to delete this item?' );
+	if ( !answer ) {
+		japp._stop_loader();
+		return false;
+	}
+
+	this._ajax(
+		{
+			app: 'k2',
+			resource: 'items',
+			task: 'trash',
+			cid: { 0: id }
+		},
+	 	function( data ) {
+			japp._stop_loader();
+			if ( data.success ) {
+				jQuery('#k2-item-list ul').html('');
+
+				if ( data.message ) {
+					_alert( data.message, null, 'Success' );
+				}
+
+				japp.clear_cache( 'k2_item', id );
+				jQuery('#page-k2-item .ui-header a:first').trigger('click');
+			} else {
+				_alert( data.message, null, 'Error' );
+			}
+		}, { async: false, type: 'DELETE' });
 }

@@ -34,6 +34,9 @@ jQuery('#page-category').live('pageshow',function(event){
 				+ '#category-created-user-id,#category-category-layout')
 				.selectmenu();
 
+			// Set page title
+			jQuery('#page-title').html( 'New category' );
+
 			return;
 		}
 
