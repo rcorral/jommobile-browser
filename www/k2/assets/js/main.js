@@ -1,3 +1,13 @@
+/* Cache types */
+// jomMobile uses cache to avoid roundtrips to the server, you can categorise cache types
+// to easily delete all the types of caches when an action is performed. For example when an item 
+// is added or updated, you would want to delete that items cache and the items list cache.
+japp.add_cache_type('k2_item', {
+	0: 'k2.item.{0}', // Will delete a cache that starts with k2.item. and the {0} will be replaced by a parameter passed to the function.
+	1: 'k2.tags', // Will only delete the k2.tags cache.
+	2: 'k2.items.*' // Will search and match any cache that begins with k2.items.
+});
+
 /* Page listeners */
 jQuery('#page-k2-items').live('pageshow',function(event){
 	try { // Wrap in try/catch in case there is a JS error, the app won't crash
@@ -30,8 +40,9 @@ jQuery('#page-k2-item').live('pagebeforecreate',function(event){
 		_populate_select( '#item-created-by', users, 'key', 'row.name',
 			{ select_option: true, selected_value: japp.api_user.id });
 
-		// New article
+		// New item
 		if ( !id ) {
+			// Stop loader and initialize all select menus
 			japp._stop_loader();
 			jQuery('#item-catid,#item-access,#item-language,#item-created-by').selectmenu();
 
@@ -47,7 +58,9 @@ jQuery('#page-k2-item').live('pagebeforecreate',function(event){
 		jQuery('#item-delete').css('display', 'block');
 	}
 
+	// Start the loader
 	japp._start_loader();
+	// This needs to be triggered this way, otherwise the device doesn't like it
 	setTimeout('func();', 250);
 	} catch(e){japp._stop_loader();}
 });
@@ -252,7 +265,9 @@ japp.load_k2_item = function( id ) {
 			name: item.tags[i].name
 		}
 	};
-    jQuery("#item-tags").tokenInput(tags, {allowNewTokens: true, theme: "facebook", preventDuplicates: true, prePopulate: prepupulate, tokenValue: 'name'});
+    jQuery("#item-tags").tokenInput(tags, {allowNewTokens: true, theme: "facebook",
+    	preventDuplicates: true, prePopulate: prepupulate, tokenValue: 'name',
+    	hintText: 'Type in a tag', tokenDelimiter: '|*|'});
 
 	this._stop_loader();
 }
@@ -280,4 +295,32 @@ japp.get_k2_item = function( id, fresh ) {
 		}, { async: false });
 
 	return jcache.get( context );
+}
+
+japp.save_k2_item = function( postdata ) {
+	if ( typeof postdata == 'undefined' ) {
+		_data = jQuery('#k2-item-form').serialize();
+		postdata = jQuery.deparam( _data );
+		postdata['tags'] = postdata['tmp-tags'].split('|*|');
+	}
+
+	// Add defaults
+	postdata.app = 'k2';
+	postdata.resource = 'item';
+
+	this._ajax(
+		postdata,
+		function( data ) {
+			japp._stop_loader();
+			if ( data.success ) {
+				_alert( data.message, null, 'Success' );
+				jQuery('#item-id').val(data.id);
+				jQuery('#item-delete').css('display', 'block');
+
+				japp.clear_cache( 'k2_item', data.id );
+			} else {
+				_alert( data.message, null, 'Error' );
+			}
+		// Either send the data as POST or PUT use the correct header for creating or updating
+		}, { async: false, type: ( ( postdata.id ) ? 'PUT' : 'POST' ) });
 }

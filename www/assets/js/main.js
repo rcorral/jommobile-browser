@@ -78,6 +78,7 @@ jQuery('#page-customdialog').live('pageshow',function(event){
 jQuery(document).bind('mobileinit',function(){
 	jQuery.mobile.fixedToolbars.setTouchToggleEnabled(false);
 	jQuery.mobile.listview.prototype.options.filterPlaceholder = 'Filter list...';
+	jQuery.mobile.pushStateEnabled = false;
 });
 var japp_form_focused = false;
 jQuery('form :input:not(:button, :submit, :reset, :hidden)').live('focus',function(event){
