@@ -20,6 +20,58 @@ var japp = {
 				}
 			};
 		this.load_tries = new Array();
+
+		// This is just for the browser version
+		this.api_key = japp_browser.api_key;
+		this.site_url = japp_browser.site_url;
+		this.cache = japp_browser.cache;
+	},
+
+	/* Exntensions */
+	load_extensions: function( fresh ) {
+		plugins = this.get_plugins( fresh );
+
+		// Remove all previous extensions in list
+		jQuery('#extension-list li.extension-plugin').each(function(){
+			jQuery(this).remove();
+		});
+
+		el = jQuery('#extension-list ul');
+		for ( _plugin in plugins ) {
+			plugin = plugins[_plugin];
+
+			jQuery(el).append('<li class="extension-plugin"><a href="' + _plugin
+				+ '/index.html" data-ajax="false">'
+				+ plugin.title
+				+ '</a></li>');
+		}
+
+		jQuery(el).listview('refresh');
+		japp._stop_loader();
+	},
+
+	get_plugins: function( fresh ) {
+		var context = 'api.plugins';
+		if ( japp.cache && !fresh && jcache.get( context ) ) {
+			return jcache.get( context );
+		}
+
+		this._ajax(
+			{
+				app: 'api',
+				resource: 'extensions'
+			},
+		 	function( data ) {
+				// Try again?
+				if ( japp._object_empty( data ) ) {
+					japp._try_server_request_again( 'api_plugins', '',
+						function(){ japp.get_plugins( fresh ); });
+				} else {
+					jcache.set( context, data, { expiry: date_times.seconds( date_times.week ) } );
+				}
+			}, { async: false });
+
+		return jcache.get( context );
 	},
 
 	/* Core Joomla */

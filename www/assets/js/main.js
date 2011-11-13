@@ -1,3 +1,11 @@
+/* Extensions */
+jQuery('#page-extensions').live('pageshow',function(event){
+	try {
+		japp._start_loader();
+		japp.load_extensions();
+	} catch(e){japp._stop_loader();}
+});
+
 /* Categories */
 jQuery('#page-categories').live('pageshow',function(event){
 	try {

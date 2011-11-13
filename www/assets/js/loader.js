@@ -11,8 +11,8 @@ var jm_loader = {
 			this._load_asset( prefix + 'assets/css/' + css[i], 'css' );
 		}
 
-		js = ['jquery-1.6.4.js', 'main.js', 'jquery.mobile-1.0rc2.js', 'jquery.ba-bbq.min.js',
-			'json2.js', 'jcache.js', 'defaults.js', 'my.conf.js'];
+		js = ['jquery-1.6.4.js', 'jquery.ba-bbq.min.js',
+			'json2.js', 'jcache.js', 'my.conf.js', 'defaults.js', 'main.js', 'jquery.mobile-1.0rc2.js'];
 		for ( var i = 0; i < js.length; i++ ) {
 			this._load_asset( prefix + 'assets/js/' + js[i], 'js' );
 		}
