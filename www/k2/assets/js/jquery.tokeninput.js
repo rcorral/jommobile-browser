@@ -32,6 +32,7 @@ var DEFAULT_SETTINGS = {
     animateDropdown: true,
     theme: null,
     classes: null,
+    extraclasses: '',
     resultsFormatter: function(item) { return "<li>" + item[this.propertyToSearch]+ "</li>" },
     tokenFormatter: function(item) { return "<li><p>" + item[this.propertyToSearch] + "</p></li>" },
     tokenValidator: function(token) { return true },
@@ -308,6 +309,16 @@ $.TokenList = function (input, url_or_data, settings) {
                     }
                     break;
             }
+        })
+        .focus(function(){
+            input_box.show();
+            token_list.removeClass('ui-shadow-inset');
+            token_list.addClass('ui-shadow-inset-ui-focus');
+        })
+        .blur(function(){
+            input_box.hide();
+            token_list.addClass('ui-shadow-inset');
+            token_list.removeClass('ui-shadow-inset-ui-focus');
         });
 
     // Keep a reference to the original input box
@@ -329,6 +340,7 @@ $.TokenList = function (input, url_or_data, settings) {
     // The list to store the token items in
     var token_list = $("<ul />")
         .addClass(settings.classes.tokenList)
+        .addClass(settings.extraclasses)
         .click(function (event) {
             var li = $(event.target).closest("li");
             if(li && li.get(0) && $.data(li.get(0), "tokeninput")) {

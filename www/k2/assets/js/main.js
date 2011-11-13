@@ -50,7 +50,8 @@ jQuery('#page-k2-item').live('pagebeforecreate',function(event){
 			tags = japp.get_k2_tags();
 		    jQuery("#item-tags").tokenInput(tags, {allowNewTokens: true, theme: "facebook",
 		    	preventDuplicates: true, tokenValue: 'name',
-		    	hintText: 'Type in a tag', tokenDelimiter: '|*|'});
+		    	hintText: 'Type in a tag', tokenDelimiter: '|*|',
+		    	extraclasses: 'token-input-list-facebook ui-input-text ui-body-c ui-corner-all ui-shadow-inset'});
 
 			// Set page title
 			jQuery('.page-title').html( 'New item' );
@@ -276,7 +277,8 @@ japp.load_k2_item = function( id ) {
 	};
     jQuery("#item-tags").tokenInput(tags, {allowNewTokens: true, theme: "facebook",
     	preventDuplicates: true, prePopulate: prepupulate, tokenValue: 'name',
-    	hintText: 'Type in a tag', tokenDelimiter: '|*|'});
+    	hintText: 'Type in a tag', tokenDelimiter: '|*|',
+		extraclasses: 'token-input-list-facebook ui-input-text ui-body-c ui-corner-all ui-shadow-inset'});
 
 	this._stop_loader();
 }
