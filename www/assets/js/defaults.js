@@ -751,7 +751,7 @@ var japp = {
 
 		// Add default data parameters
 		if ( typeof data.option == 'undefined' ) {
-			data.option = 'com_api';
+			data.option = 'com_jm';
 		}
 		if ( typeof data.key == 'undefined' ) {
 			data.key = this.api_key;
