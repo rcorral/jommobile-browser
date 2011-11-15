@@ -29,6 +29,7 @@ var jm_loader = {
 		}
 
 		if ( typeof jm_is_core == 'undefined' || jm_is_core == false ) {
+			this._load_asset( 'assets/js/functions.js', 'js' );
 			this._load_asset( 'assets/js/main.js', 'js' );
 		}
 	},

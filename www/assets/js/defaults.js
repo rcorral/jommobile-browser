@@ -1,3 +1,7 @@
+/**
+ * Object that contains all public methods
+ * Get familiarized with this object as it has many methods that you can reuse
+ */
 var japp = {
 	init: function() {
 		prefix = '';
@@ -9,9 +13,10 @@ var japp = {
 		this.requires_api_version = 0.1;
 		this.ajax_loader = prefix + 'assets/images/ajax-loader.gif';
 		this.is_loading = {};
-		this.available = false;
+		this.available = true;
 		this.cache = true;
 
+		// Set default cache types
 		this.cache_types = {
 			'category': {
 				0: 'joomla.category.{0}.id.{1}',
@@ -50,6 +55,10 @@ var japp = {
 		japp._stop_loader();
 	},
 
+	/**
+	 * Gets a list of plugins from the server
+	 * In this example it should get the K2 plugin and display it in the extensions page
+	 */
 	get_plugins: function( fresh ) {
 		var context = 'api.plugins';
 		if ( japp.cache && !fresh && jcache.get( context ) ) {
@@ -523,6 +532,11 @@ var japp = {
 	},
 
 	/* Other */
+	/**
+	 * Will set japp.api_user after the framework has loaded
+	 * There shouldn't be a need for you to call this method on your plugin
+	 * Use japp.api_user
+	 */
 	get_api_user: function( func, _data ) {
 		this._ajax(
 			{
@@ -560,6 +574,9 @@ var japp = {
 		return state;
 	},
 
+	/**
+	 * Sets a listener that gets triggered when an element comes into view
+	 */
 	scroll_bottom_listener: function( element, func ) {
 		this.unbind_scroll_listener();
 		jQuery(window).bind('scroll.removable', function(){
@@ -582,6 +599,9 @@ var japp = {
 			}}, 100);
 	},
 
+	/**
+	 * Removes all scroll listeners
+	 */
 	unbind_scroll_listener: function() {
 		jQuery(window).unbind('scroll.removable');
 	},
@@ -598,12 +618,23 @@ var japp = {
 		return fold <= jQuery(element).offset().left - 0;
     },
 
+	/**
+	 * Adds cache types
+	 * There are 3 different types of values that you can give to a cache type:
+	 * Full: k2.tags
+	 * Wildcard: k2.items.*
+	 * Parameter: k2.item.{0} - Where {0} would be replaced by the first argument passed to japp.clar_cache
+	 */
 	add_cache_type: function( type, caches ) {
 		obj = {};
 		obj[type] = caches;
 		this.cache_types = this._merge_objects( this.cache_types, obj );
 	},
 
+	/**
+	 * Clears all cache for a specified cache type.
+	 * See japp.add_cache_type() for more information
+	 */
 	clear_cache: function( type ) {
 		types = this.cache_types[type];
 
@@ -667,6 +698,11 @@ var japp = {
 			document.getElementsByTagName('head')[0].appendChild( sc );
 	},
 
+	/**
+	 * Starts loader popup
+	 * It doesn't allow the user to click or scroll, until loader is gone
+	 * Loader will automatically disapear after 30 seconds, to prevent the app from locking that way
+	 */
 	_start_loader: function( msg, callback ) {
 		if ( this.is_loading.loader ) {
 			return false;
@@ -686,6 +722,9 @@ var japp = {
 		}
 	},
 
+	/**
+	 * Stops loader manually
+	 */
 	_stop_loader: function() {
 		if ( this.is_loading.loader ) {
 			clearTimeout( this.loadMsgDelay );
@@ -716,12 +755,25 @@ var japp = {
 		}
 	},
 
-	_ajax: function( data, success, opts ) {
+	/**
+	 * Make ajax calls and executes callback on success
+	 * 
+	 * @param object An object of key/value pairs to send to server as parameters
+	 * @param function A call back function to be executed if request is successful
+	 * @param object An object of options
+	 */
+	_ajax: function( data, callback, opts ) {
 		options = {
+			// Site URL
 			url: this.site_url,
+			// Request asynchronous?
 			async: true,
+			// Request type, think of a RESTful api, make sure your requests describe what they do
+			// GET: Gets data, POST: Creates item, PUT: Updates, DELETE: Deletes
 			type: 'GET',
+			// Data type that you expect back
 			dataType: 'json',
+			// Error handler, best not to mess with this one
 			error: function(jxhr){
 				japp._stop_loader();
 				if ( typeof jxhr.responseText == 'undefined' || !jxhr.responseText ) {
@@ -764,7 +816,7 @@ var japp = {
 			async: options.async,
 			type: options.type,
 			data: data,
-			success: success,
+			success: callback,
 			error: options.error
 		}).responseText;
 	},
@@ -826,6 +878,10 @@ var japp = {
 	    return obj3;
 	},
 
+	/**
+	 * Trigger a dialog
+	 * http://jquerymobile.com/demos/1.0rc3/docs/pages/page-dialogs.html
+	 */
 	_trigger_dialog: function(dialogtype) {
 		japp.dialogtype = dialogtype;
 
@@ -844,6 +900,15 @@ jQuery(document).ready(function(){
 	japp.get_api_user(function(data, _data){japp.api_user = data.user;});
 });
 
+/**
+ * Populates select with an array, similar to JHtml::_('select.genericlist')
+ * 
+ * @param string The selector for the dropdown
+ * @param object Contains a list of options
+ * @param string The value of the object for each option to use as the value of option
+ * @param string The value of the object for each option to use as the name of option
+ * @param object Extra options
+ */
 function _populate_select( selector, obj, _key, _value, opts ) {
 	options = {
 		show_default: false,
@@ -892,6 +957,15 @@ function _populate_select( selector, obj, _key, _value, opts ) {
 	}
 }
 
+/**
+ * Populates select with an array, similar to JHtml::_('select.groupedlist')
+ * 
+ * @param string The selector for the dropdown
+ * @param object Contains a list of options
+ * @param string The value of the object for each option to use as the value of option
+ * @param string The value of the object for each option to use as the name of option
+ * @param object Extra options
+ */
 function _populate_group_select( selector, obj, _key, _value, opts ) {
 	options = {
 		opt_grp_items: 'items',
@@ -955,6 +1029,11 @@ function _populate_group_select( selector, obj, _key, _value, opts ) {
 	}
 }
 
+/**
+ * Uses a datetime formatted date, and creates a javascript Date object from it
+ *
+ * @returns object
+ */
 function _datetime_to_date( datetime ) {
 	//function parses mysql datetime string and returns javascript Date object
 	//input has to be in this format: 2007-06-05 15:26:02
@@ -978,6 +1057,9 @@ var date_times = {
 	}
 };
 
+/**
+ * Fixes text areas to match the hight of all of the text inside of them
+ */
 function _fix_textarea_height( el ) {
 	extraLineHeight = 15;
 	scrollHeight = el[0].scrollHeight;
@@ -989,6 +1071,9 @@ function _fix_textarea_height( el ) {
 	}
 }
 
+/**
+ * Any alerts sent to user should be done through this method
+ */
 function _alert( msg, func, title, btn ) {
 	alert(msg);
 
@@ -1000,6 +1085,10 @@ function _alert( msg, func, title, btn ) {
 	// http://docs.phonegap.com/en/1.1.0/phonegap_notification_notification.md.html#notification.alert
 }
 
+/**
+ * Any javascript confirm calls should go throught this methods
+ * Limitations: It won't work if the callback function does an ajax call, fails every time
+ */
 function _confirm( msg, func, title, btn ) {
 	var answer = confirm( msg );
 	
@@ -1013,6 +1102,9 @@ function _confirm( msg, func, title, btn ) {
 	// http://docs.phonegap.com/en/1.1.0/phonegap_notification_notification.md.html#notification.confirm
 }
 
+/**
+ * Get the value of a URL parameter
+ */
 function _gup( name, loc ) {
 	_name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
 	var regexS = "[\\?&]" + _name + "=([^&#]*)";
