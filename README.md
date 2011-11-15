@@ -17,7 +17,7 @@ Set up
 6. Change the configuration variables inside the `my.conf.js` file, you must enter an API token and the URL to your Joomla site.
 7. Visit the repository through your browser. Example: `http://localhost/path-to-install-git-directory/index.html`
 
-**Notes**
+**Notes**  
 It is important that you use localhost if your Joomla! site is installed in your localhost otherwise ajax calls will not work due to cross domain policies.
 
 Developing a plugin
@@ -31,21 +31,22 @@ There are two parts to every plugin, 'html/css/js' and the server side which is 
 For an example of a jomMobile Joomla plugin see the [K2 plugin](https://github.com/downloads/rcorral/jommobile-browser/plg_jm_k2.zip).
 
 This is how jomMobile will use any 3rd party plugin:
+
 1. Connect to Joomla website and asks if there are any jomMobile plugins.
 2. Your plugin will register itself and tell the com_jm component that it is available for download.
 3. The device will then download the 'html' folder in the plugin (see K2 plugin for example).
 4. Saves the files to the device and adds a new extension for the user to click on the device.
 
-**Notes**
-- For the purposes of development, the browser cannot download HTML files from a website, so you will need to manually create a folder with the name of your Joomla plugin in the www/ folder of this repo.
+**Notes**  
+- For the purposes of development, the browser cannot download HTML files from a website, so you will need to manually create a folder with the name of your Joomla plugin in the www/ folder of this repo.  
 - When packaging the plugin for release, you will need to copy the contents of this plugins folder into a 'html' folder inside your Joomla plugin, these files will be downloaded by the device.
 
 Contributing
 ----------------------------
-**Improving the `com_jm` component**
+**Improving the `com_jm` component**  
 If you want to make a change or improve the the com_jm component, check out the [com_jm repo](https://github.com/rcorral/com_jm), make a fork and do a pull request to the **staging** branch.
 
-**Improving/Contributing plugins**
+**Improving/Contributing plugins**  
 If you would like to contribute any of your plugins or improve already created ones, you can check out the [com_jm-plugins repo](https://github.com/rcorral/com_jm-plugins), make a form and do a pull request to the **staging** branch.
 
 Any other changes, please use our [contact form](http://jommobile.com/contact-us)
