@@ -41,6 +41,10 @@ This is how jomMobile will use any 3rd party plugin:
 - For the purposes of development, the browser cannot download HTML files from a website, so you will need to manually create a folder with the name of your Joomla plugin in the www/ folder of this repo.  
 - When packaging the plugin for release, you will need to copy the contents of this plugins folder into a 'html' folder inside your Joomla plugin, these files will be downloaded by the device.
 
+Want to test your plugin on a device?
+---------------------------------------
+[Contact us](http://jommobile.com/contact-us) and we can send you a development version of jomMobile for you to test on your iOS or Android device.
+
 Contributing
 ----------------------------
 **Improving the `com_jm` component**  
