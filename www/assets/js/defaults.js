@@ -339,6 +339,130 @@ var japp = {
 		return jcache.get( context );
 	},
 
+	get_languages_list: function( client, _default, fresh ) {
+		if ( typeof client == 'undefined' ) {
+			client = 'site';
+		}
+
+		if ( typeof _default == 'undefined' ) {
+			_default = 1;
+		}
+
+		var context = 'joomla.languages.' + client + '.' + _default;
+		if ( japp.cache && !fresh && jcache.get( context ) ) {
+			return jcache.get( context );
+		}
+
+		this._ajax(
+			{
+				app: 'language',
+				resource: 'languages',
+				client: client,
+				default: _default
+			},
+		 	function( data ) {
+				// Try again?
+				if ( japp._object_empty( data ) ) {
+					japp._try_server_request_again( 'content_languages', client,
+				 		function(){ japp.get_languages_list( client, _default, fresh ); });
+				} else {
+					jcache.set( context, data );
+				}
+			}, { async: false });
+
+		return jcache.get( context );
+	},
+
+	get_editors_list: function( _default, fresh ) {
+		if ( typeof _default == 'undefined' ) {
+			_default = 1;
+		}
+
+		var context = 'joomla.editors.' + _default;
+		if ( japp.cache && !fresh && jcache.get( context ) ) {
+			return jcache.get( context );
+		}
+
+		this._ajax(
+			{
+				app: 'core',
+				resource: 'editors',
+				default: _default
+			},
+		 	function( data ) {
+				// Try again?
+				if ( japp._object_empty( data ) ) {
+					japp._try_server_request_again( 'joomla_editors', _default,
+				 		function(){ japp.get_editors_list( _default, fresh ); });
+				} else {
+					jcache.set( context, data );
+				}
+			}, { async: false });
+
+		return jcache.get( context );
+	},
+
+	get_helpsite_list: function( _default, fresh ) {
+		if ( typeof _default == 'undefined' ) {
+			_default = 1;
+		}
+
+		var context = 'joomla.helpsite.' + _default;
+		if ( japp.cache && !fresh && jcache.get( context ) ) {
+			return jcache.get( context );
+		}
+
+		this._ajax(
+			{
+				app: 'core',
+				resource: 'helpsite',
+				default: _default
+			},
+		 	function( data ) {
+				// Try again?
+				if ( japp._object_empty( data ) ) {
+					japp._try_server_request_again( 'joomla_helpsite', _default,
+				 		function(){ japp.get_helpsite_list( _default, fresh ); });
+				} else {
+					jcache.set( context, data );
+				}
+			}, { async: false });
+
+		return jcache.get( context );
+	},
+
+	get_timezone_list: function( _default, field_name, field_id, fresh ) {
+		if ( typeof _default == 'undefined' ) {
+			_default = 1;
+		}
+
+		var context = 'joomla.timezone.' + _default + '.' + field_name + '.' + field_id;
+		if ( japp.cache && !fresh && jcache.get( context ) ) {
+			return jcache.get( context );
+		}
+
+		this._ajax(
+			{
+				app: 'core',
+				resource: 'timezone',
+				default: _default,
+				field_name: field_name,
+				field_id: field_id
+			},
+		 	function( data ) {
+				// Try again?
+				if ( japp._object_empty( data ) ) {
+					japp._try_server_request_again( 'joomla_timezone', '',
+				 		function(){
+					 		japp.get_timezone_list( _default, field_name, field_id, fresh ); });
+				} else {
+					jcache.set( context, data );
+				}
+			}, { async: false });
+
+		return jcache.get( context );
+	},
+
 	/* Categories */
 	load_categories: function( element, extension, limitstart, limit, fresh ) {
 		if ( this._is_loading('categories') || !element || !extension ) {
@@ -973,8 +1097,8 @@ function _populate_group_select( selector, obj, _key, _value, opts ) {
 		selected_value: 0,
 		refresh: false,
 		rebuild: false,
-		singlekey: '',
-		singlevalue: ''
+		singlevalue: '',
+		singletext: ''
 	};
 
 	if ( typeof opts != 'undefined' ) {
