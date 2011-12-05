@@ -50,6 +50,7 @@ var jcache = {
 		if ( !meta.overwrite && jcache.get( key, true ) ) {
 			return;
 		}
+		delete meta.overwrite;
 
 		if ( meta.isjson ) {
 			// Always serialize as JSON
