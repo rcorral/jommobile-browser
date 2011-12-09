@@ -165,7 +165,7 @@ jQuery('#page-k2-category').live('pagebeforecreate',function(event){
 		if ( !id ) {
 			// Stop loader and initialize all select menus
 			japp._stop_loader();
-			jQuery('#category-parent,#category-params-inheritFrom,#category-extraFieldsGroup,'
+			jQuery('#category-parent,#params_inheritFrom,#category-extraFieldsGroup,'
 				+ '#category-access,#category-language').selectmenu();
 
 			// Set page title

@@ -513,6 +513,12 @@ japp.delete_k2_tag = function() {
 }
 
 /* Categories */
+
+japp.add_cache_type('k2_category', {
+	0: 'k2.category.{0}',
+	1: 'k2.categories.*'
+});
+
 japp.get_k2_extrafieldsgroups = function( fresh ){
 	var context = 'k2.extrafieldgroups';
 	if ( japp.cache && !fresh && jcache.get( context ) ) {
@@ -527,8 +533,7 @@ japp.get_k2_extrafieldsgroups = function( fresh ){
 	 	function( data ) {
 			// Try again?
 			if ( japp._object_empty( data ) ) {
-				japp._try_server_request_again( 'get_k2_extrafieldsgroups', '',
-					function(){ japp.get_k2_extrafieldsgroups( fresh ) } );
+				jcache.set( context, data, {expiry: date_times.seconds( date_times.hour )} );
 			} else {
 				jcache.set( context, data );
 			}
@@ -681,3 +686,68 @@ japp.get_k2_category = function( id, fresh ) {
 	return jcache.get( context );
 }
 
+japp.save_k2_category = function( postdata ) {
+	if ( typeof postdata == 'undefined' ) {
+		_data = jQuery('#k2-category-form').serialize();
+		postdata = jQuery.deparam( _data );
+	}
+
+	// Add defaults
+	postdata.app = 'k2';
+	postdata.resource = 'category';
+
+	this._ajax(
+		postdata,
+		function( data ) {
+			japp._stop_loader();
+			if ( data.success ) {
+				_alert( data.message, null, 'Success' );
+				jQuery('#category-id').val(data.id);
+				jQuery('#category-delete').css('display', 'block');
+
+				japp.clear_cache( 'k2_category', data.id );
+			} else {
+				_alert( data.message, null, 'Error' );
+			}
+		// Either send the data as POST or PUT use the correct header for creating or updating
+		}, { async: false, type: ( ( postdata.id ) ? 'PUT' : 'POST' ) });
+}
+
+japp.delete_k2_category = function() {
+	id = jQuery('#category-id').val();
+
+	if ( !id ) {
+		japp._stop_loader();
+		_alert( 'Category not found' );
+		return false;
+	}
+
+	var answer = confirm( 'Are you sure you want to delete this category?' );
+	if ( !answer ) {
+		japp._stop_loader();
+		return false;
+	}
+
+	this._ajax(
+		{
+			app: 'k2',
+			resource: 'categories',
+			task: 'trash',
+			cid: { 0: id }
+		},
+	 	function( data ) {
+			japp._stop_loader();
+			if ( data.success ) {
+				jQuery('#k2-categories-list ul').html('');
+
+				if ( data.message ) {
+					_alert( data.message, null, 'Success' );
+				}
+
+				japp.clear_cache( 'k2_category', id );
+				jQuery('#page-k2-category .ui-header a:first').trigger('click');
+			} else {
+				_alert( data.message, null, 'Error' );
+			}
+		}, { async: false, type: 'DELETE' });
+}
