@@ -6,11 +6,18 @@ What is it?
 A stripped down version of the [jomMobile app](http://jommobile.com/).
 It is ready for 3rd party developers to develop plugins for their extensions.
 
+Background
+-------------------------------
+The jomMobile app is built in a Web View, and we use PhoneGap as the mobile framework on the mobile device.
+We use web languages such as html, css and javascript to develop jomMobile. We did this to allow 3rd party Joomla developers create plugins for jomMobile to allow their users to manage their components from their mobile device.
+
+It is very easy to create a jomMobile plugin. You can see the K2 plugin that was created [here](https://github.com/rcorral/com_jm-plugins/tree/master/code/plugins/jm/k2). If you look through the PHP code, you can see that we use functions that have already been built, it is just about integrating the RESTful jomMobile API and code that has already been written.
+
 Set up
 -----------------------------
 
-1. Install [com_jm](https://github.com/downloads/rcorral/jommobile-browser/com_jm-developers.zip) on your Joomla 1.7 site
-2. (optional) Install K2 so that you can see the K2 plugin in action, it is a very good and simple example
+1. Install [com_jm](http://jommobile.com/media/downloads/com_api-latest.zip) on your Joomla 1.7 site
+2. (optional) Install K2 so that you can see the [K2 plugin](http://jommobile.com/media/downloads/plg_jm_k2-latest.zip) in action, it is a very good and simple example
 3. Create a token for your user through the `com_jm` component
 4. Check out this repository, you can either checkout the repository into the www folder of your localhost or create a symlink of the www folder. If you use MAMP it is an 'htdocs' folder, you could do something like this: `ln -s /path/to/github/repo/www /Applications/MAMP/htdocs/joomla-app-browser`
 5. Rename the file located at `assets/js/my.conf-sample.js` to `assets/js/my.conf.js`
@@ -22,24 +29,24 @@ It is important that you use localhost if your Joomla! site is installed in your
 
 Developing a plugin
 --------------------------
-The best example of a plugin will be the K2 plugin, the browser version of jomMobile already has the K2 [HTML files](https://github.com/rcorral/jommobile-browser/tree/master/www/k2) installed.
+The best example of a plugin will be the [K2 plugin](https://github.com/rcorral/com_jm-plugins/tree/master/code/plugins/jm/k2), the browser version of jomMobile already has the K2 [HTML files](https://github.com/rcorral/jommobile-browser/tree/master/www/k2) installed.
 
 This plugin shows you the best structure to layout your plugin.
 
-There are two parts to every plugin, 'html/css/js' and the server side which is 'php'.
+There are two parts to every plugin, mobile assets which are **html, css and js** files and the server side files which allows the jomMobile app to communicate with the server.
 
-For an example of a jomMobile Joomla plugin see the [K2 plugin](https://github.com/downloads/rcorral/jommobile-browser/plg_jm_k2.zip).
+For an example of a jomMobile Joomla plugin see the [K2 plugin](http://jommobile.com/media/downloads/plg_jm_k2-latest.zip).
 
 This is how jomMobile will use any 3rd party plugin:
 
 1. Connect to Joomla website and asks if there are any jomMobile plugins.
-2. Your plugin will register itself and tell the com_jm component that it is available for download.
+2. Your plugin will register itself and tell the com_jm component that it has files for the device to download.
 3. The device will then download the 'html' folder in the plugin (see K2 plugin for example).
 4. Saves the files to the device and adds a new extension for the user to click on the device.
 
 **Notes**  
-- For the purposes of development, the browser cannot download HTML files from a website, so you will need to manually create a folder with the name of your Joomla plugin in the www/ folder of this repo.  
-- When packaging the plugin for release, you will need to copy the contents of this plugins folder into a 'html' folder inside your Joomla plugin, these files will be downloaded by the device.
+- For the purposes of development, the browser cannot download HTML files from a website, so you will need to manually create a folder with the name of your Joomla plugin in the www/ folder of this repo.
+- When packaging the plugin for release, you will need to copy the contents of your plugins folder into a 'html' folder inside your Joomla plugin, these files will be downloaded by the device.
 
 Want to test your plugin on a device?
 ---------------------------------------
