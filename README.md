@@ -3,8 +3,11 @@ jomMobile browser version for developers
 
 What is it?
 ---------------------------------------
-A stripped down version of the [jomMobile app](http://jommobile.com/).
-It is ready for 3rd party developers to develop plugins for their extensions.
+A stripped down version of the [jomMobile app](http://jommobile.com/) that runs on any browser.
+It is an SDK that allows developers to build plugins for their Joomla extensions that can run in the jomMobile app.
+
+**Why in the browser?**
+Developing plugins in your browser will make development faster as Joomla developers are already used to the web languages, also debuggins is much easier when using a browser. Read the 'Test your plugin on a device' section if you want to develop using your mobile device.
 
 Background
 -------------------------------
@@ -48,9 +51,14 @@ This is how jomMobile will use any 3rd party plugin:
 - For the purposes of development, the browser cannot download HTML files from a website, so you will need to manually create a folder with the name of your Joomla plugin in the www/ folder of this repo.
 - When packaging the plugin for release, you will need to copy the contents of your plugins folder into a 'html' folder inside your Joomla plugin, these files will be downloaded by the device.
 
-Want to test your plugin on a device?
+Publishing
+----------------------------
+Once you are done building your plugin you can fork this repo and send us a pull request with it and we will add it to our [plugins page](http://jommobile.com/joomla-plugins).
+
+Test your plugin on a device
 ---------------------------------------
 [Contact us](http://jommobile.com/contact-us) and we can send you a development version of jomMobile for you to test on your iOS or Android device.
+Only iOS and Android are supported.
 
 Contributing
 ----------------------------
